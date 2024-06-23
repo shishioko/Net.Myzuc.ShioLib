@@ -51,11 +51,11 @@ namespace Net.Myzuc.UtilLib
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             Contract.Requires(CanRead);
-            if (LastRead.Length >= LastReadPosition)
+            if (LastRead.Length <= LastReadPosition)
             {
                 if (Reader!.Completion.IsCompleted && Reader!.Count == 0) return 0;
                 do LastRead = await Reader!.ReadAsync(cancellationToken);
-                while (LastRead.Length == 0);
+                while (LastRead.Length <= 0);
                 LastReadPosition = 0;
             }
             int length = int.Min(count, LastRead.Length - LastReadPosition);
@@ -67,7 +67,7 @@ namespace Net.Myzuc.UtilLib
         public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         {
             Contract.Requires(CanRead);
-            if (LastRead.Length >= LastReadPosition)
+            if (LastRead.Length <= LastReadPosition)
             {
                 if (Reader!.Completion.IsCompleted && Reader!.Count == 0) return 0;
                 do LastRead = await Reader!.ReadAsync(cancellationToken);
