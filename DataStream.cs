@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Net.Myzuc.UtilLib
 {
+    /// <summary>
+    /// Provides methods for reading and writing various data formats from any big endian stream.
+    /// </summary>
     public sealed class DataStream : IDisposable
     {
         private readonly bool CanWrite;
