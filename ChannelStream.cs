@@ -11,8 +11,8 @@ namespace Net.Myzuc.UtilLib
     {
         public readonly ChannelReader<byte[]>? Reader;
         public readonly ChannelWriter<byte[]>? Writer;
-        private byte[] LastRead;
-        private int LastReadPosition;
+        private byte[] LastRead = Array.Empty<byte>();
+        private int LastReadPosition = 0;
         public override bool CanRead => Reader is not null;
         public override bool CanSeek => false;
         public override bool CanWrite => Writer is not null;
@@ -22,18 +22,6 @@ namespace Net.Myzuc.UtilLib
         {
             Reader = reader;
             Writer = writer;
-        }
-        public override void Flush()
-        {
-            return;
-        }
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            throw new System.NotSupportedException();
-        }
-        public override void SetLength(long value)
-        {
-            throw new System.NotSupportedException();
         }
         public override int Read(byte[] buffer, int offset, int count)
         {
@@ -92,6 +80,22 @@ namespace Net.Myzuc.UtilLib
         public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
         {
             await Writer!.WriteAsync(buffer.ToArray(), cancellationToken);
+        }
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            throw new System.NotSupportedException();
+        }
+        public override void SetLength(long value)
+        {
+            throw new System.NotSupportedException();
+        }
+        public override void Flush()
+        {
+            return;
+        }
+        public override Task FlushAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
         public override void Close()
         {
