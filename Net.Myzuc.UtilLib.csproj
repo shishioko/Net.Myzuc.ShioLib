@@ -7,6 +7,16 @@
     <Authors>shishioko@myzuc.net</Authors>
     <AssemblyVersion>1.0</AssemblyVersion>
     <FileVersion>1.0</FileVersion>
+    <AssemblyName>Net.Myzuc.UtilLib</AssemblyName>
+    <RootNamespace>Net.Myzuc.UtilLib</RootNamespace>
+    <Title>Net.Myzuc.UtilLib</Title>
+    <Version>1.0</Version>
+    <Company>myzuc.net</Company>
+    <Product>Net.Myzuc.UtilLib</Product>
+    <Copyright>Myzuc.Net, All Rights Reserved, 2024</Copyright>
+    <RepositoryUrl>https://github.com/shishioko/Net.Myzuc.UtilLib</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <AnalysisLevel>6.0-minimum</AnalysisLevel>
   </PropertyGroup>
 
 </Project>
