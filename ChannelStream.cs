@@ -47,6 +47,7 @@ namespace Net.Myzuc.UtilLib
             Contract.Requires(CanRead);
             if (LastRead.Length >= LastReadPosition)
             {
+                if (Reader!.Completion.IsCompleted && Reader!.Count == 0) return 0;
                 do LastRead = await Reader!.ReadAsync(cancellationToken);
                 while (LastRead.Length == 0);
                 LastReadPosition = 0;
@@ -62,6 +63,7 @@ namespace Net.Myzuc.UtilLib
             Contract.Requires(CanRead);
             if (LastRead.Length >= LastReadPosition)
             {
+                if (Reader!.Completion.IsCompleted && Reader!.Count == 0) return 0;
                 do LastRead = await Reader!.ReadAsync(cancellationToken);
                 while (LastRead.Length == 0);
                 LastReadPosition = 0;

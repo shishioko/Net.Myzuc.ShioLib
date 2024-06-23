@@ -12,7 +12,7 @@ namespace Net.Myzuc.UtilLib
     /// <summary>
     /// Provides methods for reading and writing various data formats from any big endian stream.
     /// </summary>
-    public sealed class DataStream : IDisposable
+    public sealed class DataStream : IDisposable //TODO: optional type
     {
         private readonly bool CanWrite;
         private readonly bool CanRead;
