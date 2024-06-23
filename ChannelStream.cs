@@ -105,8 +105,7 @@ namespace Net.Myzuc.UtilLib
         }
         public override void Close()
         {
-            Contract.Requires(CanWrite);
-            Writer!.Complete();
+            Writer?.Complete();
         }
         protected override void Dispose(bool disposing)
         {
