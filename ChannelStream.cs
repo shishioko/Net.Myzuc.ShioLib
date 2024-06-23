@@ -59,7 +59,6 @@ namespace Net.Myzuc.UtilLib
                 LastReadPosition = 0;
             }
             int length = int.Min(count, LastRead.Length - LastReadPosition);
-            LastRead = await Reader!.ReadAsync(cancellationToken);
             Array.Copy(LastRead, LastReadPosition, buffer, offset, length);
             LastReadPosition += length;
             return length;
@@ -75,7 +74,6 @@ namespace Net.Myzuc.UtilLib
                 LastReadPosition = 0;
             }
             int length = int.Min(buffer.Length, LastRead.Length - LastReadPosition);
-            LastRead = await Reader!.ReadAsync(cancellationToken);
             LastRead.AsSpan(LastReadPosition, length).CopyTo(buffer.Span);
             LastReadPosition += length;
             return length;
