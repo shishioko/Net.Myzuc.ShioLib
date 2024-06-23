@@ -354,6 +354,13 @@ namespace Net.Myzuc.UtilLib
             Contract.Requires(CanWrite);
             await WriteU8AVAsync(Encoding.UTF8.GetBytes(data));
         }
+        public async Task WriteStringS32Async(string data)
+        {
+            Contract.Requires(CanWrite);
+            byte[] buffer = Encoding.UTF8.GetBytes(data);
+            await WriteS32Async(buffer.Length);
+            await WriteU8AAsync(buffer);
+        }
         public async Task WriteStringS16Async(string data)
         {
             Contract.Requires(CanWrite);
@@ -625,14 +632,17 @@ namespace Net.Myzuc.UtilLib
         public async Task<string> ReadStringS32VAsync()
         {
             Contract.Requires(CanRead);
-            string data = Encoding.UTF8.GetString(await ReadU8AVAsync());
-            return data;
+            return Encoding.UTF8.GetString(await ReadU8AVAsync());
+        }
+        public async Task<string> ReadStringS32Async()
+        {
+            Contract.Requires(CanRead);
+            return Encoding.UTF8.GetString(await ReadU8AAsync(await ReadS32Async()));
         }
         public async Task<string> ReadStringS16Async()
         {
             Contract.Requires(CanRead);
-            string data = Encoding.UTF8.GetString(await ReadU8AAsync(await ReadS16Async()));
-            return data;
+            return Encoding.UTF8.GetString(await ReadU8AAsync(await ReadS16Async()));
         }
         public void WriteU8A(byte[] data)
         {
@@ -943,6 +953,13 @@ namespace Net.Myzuc.UtilLib
             Contract.Requires(CanWrite);
             WriteU8AV(Encoding.UTF8.GetBytes(data));
         }
+        public void WriteStringS32(string data)
+        {
+            Contract.Requires(CanWrite);
+            byte[] buffer = Encoding.UTF8.GetBytes(data);
+            WriteS32(buffer.Length);
+            WriteU8A(buffer);
+        }
         public void WriteStringS16(string data)
         {
             Contract.Requires(CanWrite);
@@ -1214,14 +1231,17 @@ namespace Net.Myzuc.UtilLib
         public string ReadStringS32V()
         {
             Contract.Requires(CanRead);
-            string data = Encoding.UTF8.GetString(ReadU8AV());
-            return data;
+            return Encoding.UTF8.GetString(ReadU8AV());
+        }
+        public string ReadStringS32()
+        {
+            Contract.Requires(CanRead);
+            return Encoding.UTF8.GetString(ReadU8A(ReadS32()));
         }
         public string ReadStringS16()
         {
             Contract.Requires(CanRead);
-            string data = Encoding.UTF8.GetString(ReadU8A(ReadS16()));
-            return data;
+            return Encoding.UTF8.GetString(ReadU8A(ReadS16()));
         }
     }
 }
