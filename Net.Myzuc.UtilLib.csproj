@@ -13,7 +13,7 @@
     <Version>1.0</Version>
     <Company>myzuc.net</Company>
     <Product>Net.Myzuc.UtilLib</Product>
-    <Copyright>Myzuc.Net, All Rights Reserved, 2024</Copyright>
+    <Copyright>myzuc.net 2024, All Rights Reserved.</Copyright>
     <RepositoryUrl>https://github.com/shishioko/Net.Myzuc.UtilLib</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <AnalysisLevel>6.0-minimum</AnalysisLevel>
