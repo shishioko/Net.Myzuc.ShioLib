@@ -9,6 +9,12 @@ namespace Net.Myzuc.UtilLib
 {
     public sealed class ChannelStream : Stream
     {
+        public static (ChannelStream a, ChannelStream b) CreatePair()
+        {
+            Channel<byte[]> a = Channel.CreateUnbounded<byte[]>(new() { SingleReader = false, SingleWriter = false }); 
+            Channel<byte[]> b = Channel.CreateUnbounded<byte[]>(new() { SingleReader = false, SingleWriter = false });
+            return (new(a.Reader, b.Writer), new(b.Reader, a.Writer));
+        }
         public readonly ChannelReader<byte[]>? Reader;
         public readonly ChannelWriter<byte[]>? Writer;
         private byte[] LastRead = Array.Empty<byte>();
