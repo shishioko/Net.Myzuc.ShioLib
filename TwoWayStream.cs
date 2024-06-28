@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace Net.Myzuc.UtilLib
 {
-    public sealed class TwoWayStream : Stream
+    public sealed class TwoWayStream<InputType,OutputType> : Stream where InputType : Stream where OutputType : Stream
     {
-        public readonly Stream? Input;
-        public readonly Stream? Output;
+        public readonly InputType? Input;
+        public readonly OutputType? Output;
         public override bool CanRead => Input?.CanRead ?? false;
         public override bool CanWrite => Output?.CanWrite ?? false;
         public override bool CanSeek => false;
         public override long Length => throw new System.NotSupportedException();
         public override long Position { get => throw new System.NotSupportedException(); set => throw new System.NotSupportedException(); }
-        public TwoWayStream(Stream? input, Stream? output)
+        public TwoWayStream(InputType? input, OutputType? output)
         {
             Input = input;
             Output = output;
