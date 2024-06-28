@@ -20,6 +20,10 @@ namespace Net.Myzuc.UtilLib
             Input = input;
             Output = output;
         }
+        public TwoWayStream<OutputType, InputType> Invert()
+        {
+            return new(Output, Input);
+        }
         public override int Read(byte[] buffer, int offset, int count)
         {
             Contract.Requires(CanRead);
