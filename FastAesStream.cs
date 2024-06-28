@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Net.Myzuc.UtilLib
 {
-    internal class FastAesStream : Stream
+    public sealed class FastAesStream : Stream
     {
         public static bool Supported => Sse2.IsSupported && Aes.IsSupported;
         private static Vector128<byte>[] KeyExpansion(Span<byte> key)

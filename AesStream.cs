@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Net.Myzuc.UtilLib
 {
-    internal class AesStream : Stream
+    public sealed class AesStream : Stream
     {
         private readonly Aes Aes;
         private bool InEnd = false;
