@@ -12,16 +12,22 @@ namespace Net.Myzuc.UtilLib
     /// <summary>
     /// Provides methods for reading and writing various data formats from any big endian stream.
     /// </summary>
-    public sealed class DataStream<T> : IDisposable where T : Stream  //TODO: optional type
+    public sealed class DataStream<T> : IDisposable, IAsyncDisposable where T : Stream  //TODO: optional type
     {
         public readonly T Stream;
-        public DataStream(T stream)
+        private readonly bool KeepOpen;
+        public DataStream(T stream, bool keepOpen = false)
         {
             Stream = stream;
+            KeepOpen = keepOpen;
         }
         public void Dispose()
         {
-            Stream.Dispose();
+            if (!KeepOpen) Stream.Dispose();
+        }
+        public async ValueTask DisposeAsync()
+        {
+            if (!KeepOpen) await Stream.DisposeAsync();
         }
         public async Task WriteU8AAsync(byte[] data)
         {
