@@ -114,11 +114,13 @@ namespace Net.Myzuc.UtilLib
         }
         public override void Flush()
         {
-            return;
+            Input?.Flush();
+            Output?.Flush();
         }
-        public override Task FlushAsync(CancellationToken cancellationToken)
+        public override async Task FlushAsync(CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            if (Input is not null) await Input.FlushAsync(cancellationToken);
+            if (Output is not null) await Output.FlushAsync(cancellationToken);
         }
         public override void Close()
         {
