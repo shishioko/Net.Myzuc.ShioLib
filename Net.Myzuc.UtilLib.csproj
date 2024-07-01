@@ -3,14 +3,14 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>annotations</Nullable>
     <Authors>shishioko@myzuc.net</Authors>
-    <AssemblyVersion>1.1</AssemblyVersion>
-    <FileVersion>1.1</FileVersion>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
     <AssemblyName>Net.Myzuc.UtilLib</AssemblyName>
     <RootNamespace>Net.Myzuc.UtilLib</RootNamespace>
     <Title>Net.Myzuc.UtilLib</Title>
-    <Version>1.1</Version>
+    <Version>1.1.1.0</Version>
     <Company>myzuc.net</Company>
     <Product>Net.Myzuc.UtilLib</Product>
     <Copyright>myzuc.net 2024, All Rights Reserved.</Copyright>
