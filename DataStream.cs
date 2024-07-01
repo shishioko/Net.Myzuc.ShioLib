@@ -20,7 +20,8 @@ namespace Net.Myzuc.UtilLib
         {
             Stream = stream;
             KeepOpen = keepOpen;
-            Normal = new(Stream, KeepOpen);
+            if (this is DataStream<Stream> normal) Normal = normal;
+            else Normal = new(Stream, KeepOpen);
         }
         public void Dispose()
         {
