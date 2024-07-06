@@ -14,8 +14,9 @@ namespace Net.Myzuc.UtilLib
     public static class DataStreamExtension
     {
         #region U8
-        public static async Task<byte[]> ReadU8AAsync(this Stream stream, int size)
+        public static async Task<byte[]> ReadU8AAsync(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] data = new byte[size];
             int position = 0;
             while (position < size)
@@ -26,8 +27,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteU8AAsync(this Stream stream, byte[] data)
+        public static async Task WriteU8AAsync(this Stream stream, byte[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             await stream.WriteAsync(data);
         }
         public static async Task<byte[]> ReadU8AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
@@ -47,8 +49,9 @@ namespace Net.Myzuc.UtilLib
         {
             await stream.WriteAsync(new byte[] { data });
         }
-        public static byte[] ReadU8A(this Stream stream, int size)
+        public static byte[] ReadU8A(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] data = new byte[size];
             int position = 0;
             while (position < size)
@@ -59,8 +62,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteU8A(this Stream stream, byte[] data)
+        public static void WriteU8A(this Stream stream, byte[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             stream.Write(data);
         }
         public static byte[] ReadU8A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
@@ -82,12 +86,14 @@ namespace Net.Myzuc.UtilLib
         }
         #endregion
         #region S8
-        public static async Task<sbyte[]> ReadS8AAsync(this Stream stream, int size)
+        public static async Task<sbyte[]> ReadS8AAsync(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             return MemoryMarshal.Cast<byte, sbyte>(await stream.ReadU8AAsync(size)).ToArray();
         }
-        public static async Task WriteS8AAsync(this Stream stream, sbyte[] data)
+        public static async Task WriteS8AAsync(this Stream stream, sbyte[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             await stream.WriteAsync(MemoryMarshal.AsBytes(data.AsSpan()).ToArray());
         }
         public static async Task<sbyte[]> ReadS8AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
@@ -107,12 +113,14 @@ namespace Net.Myzuc.UtilLib
         {
             await stream.WriteAsync(MemoryMarshal.AsBytes<sbyte>(new sbyte[] { data }).ToArray());
         }
-        public static sbyte[] ReadS8A(this Stream stream, int size)
+        public static sbyte[] ReadS8A(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             return MemoryMarshal.Cast<byte, sbyte>(stream.ReadU8A(size)).ToArray();
         }
-        public static void WriteS8A(this Stream stream, sbyte[] data)
+        public static void WriteS8A(this Stream stream, sbyte[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             stream.Write(MemoryMarshal.AsBytes(data.AsSpan()).ToArray());
         }
         public static sbyte[] ReadS8A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
@@ -134,8 +142,9 @@ namespace Net.Myzuc.UtilLib
         }
         #endregion
         #region U16
-        public static async Task<ushort[]> ReadU16AAsync(this Stream stream, int size)
+        public static async Task<ushort[]> ReadU16AAsync(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(ushort));
             ushort[] data = new ushort[size];
             for (int i = 0; i < size; i++)
@@ -144,8 +153,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteU16AAsync(this Stream stream, ushort[] data)
+        public static async Task WriteU16AAsync(this Stream stream, ushort[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(ushort)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -185,8 +195,9 @@ namespace Net.Myzuc.UtilLib
             BinaryPrimitives.WriteUInt16BigEndian(buffer, data);
             await stream.WriteAsync(buffer);
         }
-        public static ushort[] ReadU16A(this Stream stream, int size)
+        public static ushort[] ReadU16A(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = stream.ReadU8A(size * sizeof(ushort));
             ushort[] data = new ushort[size];
             for (int i = 0; i < size; i++)
@@ -195,8 +206,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteU16A(this Stream stream, ushort[] data)
+        public static void WriteU16A(this Stream stream, ushort[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(ushort)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -238,8 +250,9 @@ namespace Net.Myzuc.UtilLib
         }
         #endregion
         #region S16
-        public static async Task<short[]> ReadS16AAsync(this Stream stream, int size)
+        public static async Task<short[]> ReadS16AAsync(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(short));
             short[] data = new short[size];
             for (int i = 0; i < size; i++)
@@ -248,8 +261,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteS16AAsync(this Stream stream, short[] data)
+        public static async Task WriteS16AAsync(this Stream stream, short[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(short)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -289,8 +303,9 @@ namespace Net.Myzuc.UtilLib
             BinaryPrimitives.WriteInt16BigEndian(buffer, data);
             await stream.WriteAsync(buffer);
         }
-        public static short[] ReadS16A(this Stream stream, int size)
+        public static short[] ReadS16A(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = stream.ReadU8A(size * sizeof(short));
             short[] data = new short[size];
             for (int i = 0; i < size; i++)
@@ -299,8 +314,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteS16A(this Stream stream, short[] data)
+        public static void WriteS16A(this Stream stream, short[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(short)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -342,8 +358,9 @@ namespace Net.Myzuc.UtilLib
         }
         #endregion
         #region U32
-        public static async Task<uint[]> ReadU32AAsync(this Stream stream, int size)
+        public static async Task<uint[]> ReadU32AAsync(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(uint));
             uint[] data = new uint[size];
             for (int i = 0; i < size; i++)
@@ -352,8 +369,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteU32AAsync(this Stream stream, uint[] data)
+        public static async Task WriteU32AAsync(this Stream stream, uint[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(uint)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -393,8 +411,9 @@ namespace Net.Myzuc.UtilLib
             BinaryPrimitives.WriteUInt32BigEndian(buffer, data);
             await stream.WriteAsync(buffer);
         }
-        public static uint[] ReadU32A(this Stream stream, int size)
+        public static uint[] ReadU32A(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = stream.ReadU8A(size * sizeof(uint));
             uint[] data = new uint[size];
             for (int i = 0; i < size; i++)
@@ -403,8 +422,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteU32A(this Stream stream, uint[] data)
+        public static void WriteU32A(this Stream stream, uint[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(uint)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -446,8 +466,9 @@ namespace Net.Myzuc.UtilLib
         }
         #endregion
         #region S32
-        public static async Task<int[]> ReadS32AAsync(this Stream stream, int size)
+        public static async Task<int[]> ReadS32AAsync(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(int));
             int[] data = new int[size];
             for (int i = 0; i < size; i++)
@@ -456,8 +477,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteS32AAsync(this Stream stream, int[] data)
+        public static async Task WriteS32AAsync(this Stream stream, int[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(int)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -497,8 +519,9 @@ namespace Net.Myzuc.UtilLib
             BinaryPrimitives.WriteInt32BigEndian(buffer, data);
             await stream.WriteAsync(buffer);
         }
-        public static int[] ReadS32A(this Stream stream, int size)
+        public static int[] ReadS32A(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = stream.ReadU8A(size * sizeof(int));
             int[] data = new int[size];
             for (int i = 0; i < size; i++)
@@ -507,8 +530,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteS32A(this Stream stream, int[] data)
+        public static void WriteS32A(this Stream stream, int[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(int)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -550,8 +574,9 @@ namespace Net.Myzuc.UtilLib
         }
         #endregion
         #region U64
-        public static async Task<ulong[]> ReadU64AAsync(this Stream stream, int size)
+        public static async Task<ulong[]> ReadU64AAsync(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(ulong));
             ulong[] data = new ulong[size];
             for (int i = 0; i < size; i++)
@@ -560,8 +585,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteU64AAsync(this Stream stream, ulong[] data)
+        public static async Task WriteU64AAsync(this Stream stream, ulong[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(ulong)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -601,8 +627,9 @@ namespace Net.Myzuc.UtilLib
             BinaryPrimitives.WriteUInt64BigEndian(buffer, data);
             await stream.WriteAsync(buffer);
         }
-        public static ulong[] ReadU64A(this Stream stream, int size)
+        public static ulong[] ReadU64A(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = stream.ReadU8A(size * sizeof(ulong));
             ulong[] data = new ulong[size];
             for (int i = 0; i < size; i++)
@@ -611,8 +638,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteU64A(this Stream stream, ulong[] data)
+        public static void WriteU64A(this Stream stream, ulong[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(ulong)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -654,8 +682,9 @@ namespace Net.Myzuc.UtilLib
         }
         #endregion
         #region S64
-        public static async Task<long[]> ReadS64AAsync(this Stream stream, int size)
+        public static async Task<long[]> ReadS64AAsync(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(long));
             long[] data = new long[size];
             for (int i = 0; i < size; i++)
@@ -664,8 +693,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteS64AAsync(this Stream stream, long[] data)
+        public static async Task WriteS64AAsync(this Stream stream, long[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(long)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -705,8 +735,9 @@ namespace Net.Myzuc.UtilLib
             BinaryPrimitives.WriteInt64BigEndian(buffer, data);
             await stream.WriteAsync(buffer);
         }
-        public static long[] ReadS64A(this Stream stream, int size)
+        public static long[] ReadS64A(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = stream.ReadU8A(size * sizeof(long));
             long[] data = new long[size];
             for (int i = 0; i < size; i++)
@@ -715,8 +746,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteS64A(this Stream stream, long[] data)
+        public static void WriteS64A(this Stream stream, long[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(long)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -758,8 +790,9 @@ namespace Net.Myzuc.UtilLib
         }
         #endregion
         #region F32
-        public static async Task<float[]> ReadF32AAsync(this Stream stream, int size)
+        public static async Task<float[]> ReadF32AAsync(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(float));
             float[] data = new float[size];
             for (int i = 0; i < size; i++)
@@ -768,8 +801,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteF32AAsync(this Stream stream, float[] data)
+        public static async Task WriteF32AAsync(this Stream stream, float[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(float)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -809,8 +843,9 @@ namespace Net.Myzuc.UtilLib
             BinaryPrimitives.WriteSingleBigEndian(buffer, data);
             await stream.WriteAsync(buffer);
         }
-        public static float[] ReadF32A(this Stream stream, int size)
+        public static float[] ReadF32A(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = stream.ReadU8A(size * sizeof(float));
             float[] data = new float[size];
             for (int i = 0; i < size; i++)
@@ -819,8 +854,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteF32A(this Stream stream, float[] data)
+        public static void WriteF32A(this Stream stream, float[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(float)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -862,8 +898,9 @@ namespace Net.Myzuc.UtilLib
         }
         #endregion
         #region F64
-        public static async Task<double[]> ReadF64AAsync(this Stream stream, int size)
+        public static async Task<double[]> ReadF64AAsync(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(double));
             double[] data = new double[size];
             for (int i = 0; i < size; i++)
@@ -872,8 +909,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteF64AAsync(this Stream stream, double[] data)
+        public static async Task WriteF64AAsync(this Stream stream, double[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(double)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -913,8 +951,9 @@ namespace Net.Myzuc.UtilLib
             BinaryPrimitives.WriteDoubleBigEndian(buffer, data);
             await stream.WriteAsync(buffer);
         }
-        public static double[] ReadF64A(this Stream stream, int size)
+        public static double[] ReadF64A(this Stream stream, int size, int limit = int.MaxValue)
         {
+            if (size > limit) throw new ProtocolViolationException();
             byte[] buffer = stream.ReadU8A(size * sizeof(double));
             double[] data = new double[size];
             for (int i = 0; i < size; i++)
@@ -923,8 +962,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteF64A(this Stream stream, double[] data)
+        public static void WriteF64A(this Stream stream, double[] data, int limit = int.MaxValue)
         {
+            if (data.Length > limit) throw new ProtocolViolationException();
             byte[] buffer = new byte[data.Length * sizeof(double)];
             for (int i = 0; i < data.Length; i++)
             {
