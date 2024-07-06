@@ -105,7 +105,7 @@ namespace Net.Myzuc.UtilLib
             aes.Key = secret;
             aes.IV = secret[..16];
             aes.Padding = PaddingMode.PKCS7;
-            Stream = new TwoWayStream<CryptoStream, CryptoStream>(new(Stream, aes.CreateDecryptor(), CryptoStreamMode.Read), new(Stream, aes.CreateEncryptor(), CryptoStreamMode.Write));
+            Stream = new WrapperStream<CryptoStream, CryptoStream>(new(Stream, aes.CreateDecryptor(), CryptoStreamMode.Read), new(Stream, aes.CreateEncryptor(), CryptoStreamMode.Write));
             _ = ReceiveAsync();
         }
         private async Task ReceiveAsync()

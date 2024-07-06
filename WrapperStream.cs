@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Net.Myzuc.UtilLib
 {
-    public sealed class TwoWayStream<InputType,OutputType> : Stream where InputType : Stream where OutputType : Stream
+    public sealed class WrapperStream<InputType,OutputType> : Stream where InputType : Stream where OutputType : Stream
     {
         public readonly InputType? Input;
         public readonly OutputType? Output;
@@ -15,12 +15,12 @@ namespace Net.Myzuc.UtilLib
         public override bool CanSeek => false;
         public override long Length => throw new System.NotSupportedException();
         public override long Position { get => throw new System.NotSupportedException(); set => throw new System.NotSupportedException(); }
-        public TwoWayStream(InputType? input, OutputType? output)
+        public WrapperStream(InputType? input, OutputType? output)
         {
             Input = input;
             Output = output;
         }
-        public TwoWayStream<OutputType, InputType> Invert()
+        public WrapperStream<OutputType, InputType> Invert()
         {
             return new(Output, Input);
         }
