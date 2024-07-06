@@ -14,7 +14,7 @@ namespace Net.Myzuc.UtilLib
     public sealed class MultistreamConnection : IDisposable, IAsyncDisposable
     {
         private bool Disposed = false;
-        private Stream Stream;
+        private readonly Stream Stream;
         private readonly SemaphoreSlim Sync = new(1, 1);
         private readonly SemaphoreSlim SyncWrite = new(1, 1);
         private readonly Dictionary<Guid, ChannelStream> Streams = [];
@@ -29,6 +29,7 @@ namespace Net.Myzuc.UtilLib
         public MultistreamConnection(Stream stream)
         {
             Stream = stream;
+            _ = ReceiveAsync();
         }
         /// <summary>
         /// Closes all <see cref="Net.Myzuc.UtilLib.ChannelStream"/> and disposes the underlying <see cref="System.Net.Sockets.Socket"/> asynchronously.
@@ -80,33 +81,6 @@ namespace Net.Myzuc.UtilLib
         public ChannelStream Open()
         {
             return OpenAsync().Result;
-        }
-        private async Task InitializeAsync()
-        {
-            Version localVersion = Assembly.GetExecutingAssembly().GetName().Version ?? new(0, 0, 0, 0);
-            await Stream.WriteS32VAsync(localVersion.Major);
-            await Stream.WriteS32VAsync(localVersion.Minor);
-            await Stream.WriteS32VAsync(localVersion.MajorRevision);
-            await Stream.WriteS32VAsync(localVersion.MinorRevision);
-            if (localVersion != new Version(await Stream.ReadS32VAsync(), await Stream.ReadS32VAsync(), await Stream.ReadS32VAsync(), await Stream.ReadS32VAsync()))
-            {
-                await DisposeAsync();
-                throw new NotSupportedException("Version mismatch");
-            }
-            using RSA rsa = RSA.Create();
-            rsa.KeySize = 2048;
-            await Stream.WriteU8AAsync(rsa.ExportRSAPublicKey(), SizePrefix.S32V, rsa.KeySize / 8 + 128);
-            byte[] secret = rsa.Decrypt(await Stream.ReadU8AAsync(SizePrefix.S32V), RSAEncryptionPadding.Pkcs1);
-            using Aes aes = Aes.Create();
-            aes.Mode = CipherMode.CFB;
-            aes.BlockSize = 128;
-            aes.FeedbackSize = 8;
-            aes.KeySize = 256;
-            aes.Key = secret;
-            aes.IV = secret[..16];
-            aes.Padding = PaddingMode.PKCS7;
-            Stream = new WrapperStream<CryptoStream, CryptoStream>(new(Stream, aes.CreateDecryptor(), CryptoStreamMode.Read), new(Stream, aes.CreateEncryptor(), CryptoStreamMode.Write));
-            _ = ReceiveAsync();
         }
         private async Task ReceiveAsync()
         {
