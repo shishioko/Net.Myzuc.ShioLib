@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace Net.Myzuc.UtilLib
 {
-    public sealed class AesStream : Stream
+    public sealed class SlowAesStream : Stream
     {
         private readonly Aes Aes;
         private bool InEnd = false;
         private readonly byte[] ReadStreamIV = new byte[16];
         private readonly byte[] WriteStreamIV = new byte[16];
         public Stream BaseStream { get; set; }
-        public AesStream(Stream stream, byte[] key)
+        public SlowAesStream(Stream stream, byte[] key)
         {
             BaseStream = stream;
             Aes = Aes.Create();
