@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-namespace Net.Myzuc.UtilLib
+namespace Net.Myzuc.ShioLib
 {
     public class AesCfbStream : WrapperStream<Stream, Stream>
     {

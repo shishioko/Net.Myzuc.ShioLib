@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Net.Myzuc.UtilLib
+namespace Net.Myzuc.ShioLib
 {
     /// <summary>
     /// Representative of a connection to a Multistream server.
@@ -19,7 +19,7 @@ namespace Net.Myzuc.UtilLib
         private readonly SemaphoreSlim SyncWrite = new(1, 1);
         private readonly Dictionary<Guid, ChannelStream> Streams = [];
         /// <summary>
-        /// Fired whenever a <see cref="Net.Myzuc.UtilLib.ChannelStream"/> is opened.
+        /// Fired whenever a <see cref="Net.Myzuc.ShioLib.ChannelStream"/> is opened.
         /// </summary>
         public event Func<ChannelStream, Task> OnRequest = (ChannelStream stream) => Task.CompletedTask;
         /// <summary>
@@ -32,7 +32,7 @@ namespace Net.Myzuc.UtilLib
             _ = ReceiveAsync();
         }
         /// <summary>
-        /// Closes all <see cref="Net.Myzuc.UtilLib.ChannelStream"/> and disposes the underlying <see cref="System.Net.Sockets.Socket"/> asynchronously.
+        /// Closes all <see cref="Net.Myzuc.ShioLib.ChannelStream"/> and disposes the underlying <see cref="System.Net.Sockets.Socket"/> asynchronously.
         /// </summary>
         /// <returns></returns>
         public async ValueTask DisposeAsync()
@@ -46,7 +46,7 @@ namespace Net.Myzuc.UtilLib
             await OnDisposed();
         }
         /// <summary>
-        /// Closes all <see cref="Net.Myzuc.UtilLib.ChannelStream"/> and disposes the underlying <see cref="System.Net.Sockets.Socket"/> synchronously.
+        /// Closes all <see cref="Net.Myzuc.ShioLib.ChannelStream"/> and disposes the underlying <see cref="System.Net.Sockets.Socket"/> synchronously.
         /// </summary>
         /// <returns></returns>
         public void Dispose()
@@ -60,9 +60,9 @@ namespace Net.Myzuc.UtilLib
             OnDisposed().Wait();
         }
         /// <summary>
-        /// Opens a new <see cref="Net.Myzuc.UtilLib.ChannelStream"/> on the <see cref="Net.Myzuc.Multistream.Client.MultistreamConnection"/> asynchronously.
+        /// Opens a new <see cref="Net.Myzuc.ShioLib.ChannelStream"/> on the <see cref="Net.Myzuc.Multistream.Client.MultistreamConnection"/> asynchronously.
         /// </summary>
-        /// <returns>The newly opened <see cref="Net.Myzuc.UtilLib.ChannelStream"/></returns>
+        /// <returns>The newly opened <see cref="Net.Myzuc.ShioLib.ChannelStream"/></returns>
         public async Task<ChannelStream> OpenAsync()
         {
             await Sync.WaitAsync();
@@ -75,9 +75,9 @@ namespace Net.Myzuc.UtilLib
             return userStream;
         }
         /// <summary>
-        /// Opens a new <see cref="Net.Myzuc.UtilLib.ChannelStream"/> on the <see cref="Net.Myzuc.Multistream.Client.MultistreamConnection"/> synchronously.
+        /// Opens a new <see cref="Net.Myzuc.ShioLib.ChannelStream"/> on the <see cref="Net.Myzuc.Multistream.Client.MultistreamConnection"/> synchronously.
         /// </summary>
-        /// <returns>The newly opened <see cref="Net.Myzuc.UtilLib.ChannelStream"/></returns>
+        /// <returns>The newly opened <see cref="Net.Myzuc.ShioLib.ChannelStream"/></returns>
         public ChannelStream Open()
         {
             return OpenAsync().Result;

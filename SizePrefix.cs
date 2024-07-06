@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Net.Myzuc.UtilLib
+namespace Net.Myzuc.ShioLib
 {
     public sealed class SizePrefix
     {

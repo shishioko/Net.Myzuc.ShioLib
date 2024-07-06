@@ -8,7 +8,7 @@ using System.Runtime.Intrinsics.X86;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Net.Myzuc.UtilLib
+namespace Net.Myzuc.ShioLib
 {
     public sealed class FastAesStream : Stream
     {

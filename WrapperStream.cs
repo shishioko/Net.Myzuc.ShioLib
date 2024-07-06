@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Net.Myzuc.UtilLib
+namespace Net.Myzuc.ShioLib
 {
     public class WrapperStream<InputType, OutputType> : Stream where InputType : Stream where OutputType : Stream
     {

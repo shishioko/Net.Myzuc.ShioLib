@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net.Myzuc.UtilLib", "Net.Myzuc.UtilLib.csproj", "{CE8DE9D5-387E-4324-AA4F-6327EFDD0E95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net.Myzuc.ShioLib", "Net.Myzuc.ShioLib.csproj", "{CE8DE9D5-387E-4324-AA4F-6327EFDD0E95}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

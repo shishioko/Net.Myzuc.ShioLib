@@ -7,14 +7,14 @@
     <Authors>shishioko@myzuc.net</Authors>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
-    <AssemblyName>Net.Myzuc.UtilLib</AssemblyName>
-    <RootNamespace>Net.Myzuc.UtilLib</RootNamespace>
-    <Title>Net.Myzuc.UtilLib</Title>
+    <AssemblyName>Net.Myzuc.ShioLib</AssemblyName>
+    <RootNamespace>Net.Myzuc.ShioLib</RootNamespace>
+    <Title>Net.Myzuc.ShioLib</Title>
     <Version>1.2.3.0</Version>
     <Company>myzuc.net</Company>
-    <Product>Net.Myzuc.UtilLib</Product>
+    <Product>Net.Myzuc.ShioLib</Product>
     <Copyright>myzuc.net 2024, All Rights Reserved.</Copyright>
-    <RepositoryUrl>https://github.com/shishioko/Net.Myzuc.UtilLib</RepositoryUrl>
+    <RepositoryUrl>https://github.com/shishioko/Net.Myzuc.ShioLib</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <AnalysisLevel>6.0-minimum</AnalysisLevel>
   </PropertyGroup>
