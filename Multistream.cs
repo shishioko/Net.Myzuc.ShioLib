@@ -136,8 +136,8 @@ namespace Net.Myzuc.ShioLib
                     {
                         await SyncWrite.WaitAsync();
                         await Stream.WriteGuidAsync(streamId);
-                        int size = int.Min(data.Length - i, i + 1024);
-                        await Stream.WriteU8AAsync(data[i..size], SizePrefix.U16, 1024);
+                        int size = int.Min(data.Length - i, 1024);
+                        await Stream.WriteU8AAsync(data[i..(i + size)], SizePrefix.U16, 1024);
                         await Stream.WriteU8AAsync(new byte[((16 - ((18 + size) % 16)) & 15) + 16]);
                         SyncWrite.Release();
                     }
