@@ -30,13 +30,13 @@ namespace Net.Myzuc.UtilLib
         {
             await stream.WriteAsync(data);
         }
-        public static async Task<byte[]> ReadU8AAsync(this Stream stream, SizePrefix prefix)
+        public static async Task<byte[]> ReadU8AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            return await stream.ReadU8AAsync(await prefix.ReadAsync(stream));
+            return await stream.ReadU8AAsync(await prefix.ReadAsync(stream, limit));
         }
-        public static async Task WriteU8AAsync(this Stream stream, byte[] data, SizePrefix prefix)
+        public static async Task WriteU8AAsync(this Stream stream, byte[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            await prefix.WriteAsync(stream, data.Length);
+            await prefix.WriteAsync(stream, limit, data.Length);
             await stream.WriteU8AAsync(data);
         }
         public static async Task<byte> ReadU8Async(this Stream stream)
@@ -63,13 +63,13 @@ namespace Net.Myzuc.UtilLib
         {
             stream.Write(data);
         }
-        public static byte[] ReadU8A(this Stream stream, SizePrefix prefix)
+        public static byte[] ReadU8A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            return stream.ReadU8A(prefix.ReadSync(stream));
+            return stream.ReadU8A(prefix.ReadSync(stream, limit));
         }
-        public static void WriteU8A(this Stream stream, byte[] data, SizePrefix prefix)
+        public static void WriteU8A(this Stream stream, byte[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            prefix.WriteSync(stream, data.Length);
+            prefix.WriteSync(stream, limit, data.Length);
             stream.WriteU8A(data);
         }
         public static byte ReadU8(this Stream stream)
@@ -90,13 +90,13 @@ namespace Net.Myzuc.UtilLib
         {
             await stream.WriteAsync(MemoryMarshal.AsBytes(data.AsSpan()).ToArray());
         }
-        public static async Task<sbyte[]> ReadS8AAsync(this Stream stream, SizePrefix prefix)
+        public static async Task<sbyte[]> ReadS8AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            return MemoryMarshal.Cast<byte, sbyte>(await stream.ReadU8AAsync(await prefix.ReadAsync(stream))).ToArray();
+            return MemoryMarshal.Cast<byte, sbyte>(await stream.ReadU8AAsync(await prefix.ReadAsync(stream, limit))).ToArray();
         }
-        public static async Task WriteS8AAsync(this Stream stream, sbyte[] data, SizePrefix prefix)
+        public static async Task WriteS8AAsync(this Stream stream, sbyte[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            await prefix.WriteAsync(stream, data.Length);
+            await prefix.WriteAsync(stream, limit, data.Length);
             await stream.WriteAsync(MemoryMarshal.AsBytes(data.AsSpan()).ToArray());
         }
         public static async Task<sbyte> ReadS8Async(this Stream stream)
@@ -115,13 +115,13 @@ namespace Net.Myzuc.UtilLib
         {
             stream.Write(MemoryMarshal.AsBytes(data.AsSpan()).ToArray());
         }
-        public static sbyte[] ReadS8A(this Stream stream, SizePrefix prefix)
+        public static sbyte[] ReadS8A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            return MemoryMarshal.Cast<byte, sbyte>(stream.ReadU8A(prefix.ReadSync(stream))).ToArray();
+            return MemoryMarshal.Cast<byte, sbyte>(stream.ReadU8A(prefix.ReadSync(stream, limit))).ToArray();
         }
-        public static void WriteS8A(this Stream stream, sbyte[] data, SizePrefix prefix)
+        public static void WriteS8A(this Stream stream, sbyte[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            prefix.WriteSync(stream, data.Length);
+            prefix.WriteSync(stream, limit, data.Length);
             stream.Write(MemoryMarshal.AsBytes(data.AsSpan()).ToArray());
         }
         public static sbyte ReadS8(this Stream stream)
@@ -153,9 +153,9 @@ namespace Net.Myzuc.UtilLib
             }
             await stream.WriteAsync(buffer);
         }
-        public static async Task<ushort[]> ReadU16AAsync(this Stream stream, SizePrefix prefix)
+        public static async Task<ushort[]> ReadU16AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = await prefix.ReadAsync(stream);
+            int size = await prefix.ReadAsync(stream, limit);
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(ushort));
             ushort[] data = new ushort[size];
             for (int i = 0; i < size; i++)
@@ -164,9 +164,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteU16AAsync(this Stream stream, ushort[] data, SizePrefix prefix)
+        public static async Task WriteU16AAsync(this Stream stream, ushort[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            await prefix.WriteAsync(stream, data.Length);
+            await prefix.WriteAsync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(ushort)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -204,9 +204,9 @@ namespace Net.Myzuc.UtilLib
             }
             stream.Write(buffer);
         }
-        public static ushort[] ReadU16A(this Stream stream, SizePrefix prefix)
+        public static ushort[] ReadU16A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = prefix.ReadSync(stream);
+            int size = prefix.ReadSync(stream, limit);
             byte[] buffer = stream.ReadU8A(size * sizeof(ushort));
             ushort[] data = new ushort[size];
             for (int i = 0; i < size; i++)
@@ -215,9 +215,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteU16A(this Stream stream, ushort[] data, SizePrefix prefix)
+        public static void WriteU16A(this Stream stream, ushort[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            prefix.WriteSync(stream, data.Length);
+            prefix.WriteSync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(ushort)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -257,9 +257,9 @@ namespace Net.Myzuc.UtilLib
             }
             await stream.WriteAsync(buffer);
         }
-        public static async Task<short[]> ReadS16AAsync(this Stream stream, SizePrefix prefix)
+        public static async Task<short[]> ReadS16AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = await prefix.ReadAsync(stream);
+            int size = await prefix.ReadAsync(stream, limit);
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(short));
             short[] data = new short[size];
             for (int i = 0; i < size; i++)
@@ -268,9 +268,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteS16AAsync(this Stream stream, short[] data, SizePrefix prefix)
+        public static async Task WriteS16AAsync(this Stream stream, short[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            await prefix.WriteAsync(stream, data.Length);
+            await prefix.WriteAsync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(short)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -308,9 +308,9 @@ namespace Net.Myzuc.UtilLib
             }
             stream.Write(buffer);
         }
-        public static short[] ReadS16A(this Stream stream, SizePrefix prefix)
+        public static short[] ReadS16A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = prefix.ReadSync(stream);
+            int size = prefix.ReadSync(stream, limit);
             byte[] buffer = stream.ReadU8A(size * sizeof(short));
             short[] data = new short[size];
             for (int i = 0; i < size; i++)
@@ -319,9 +319,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteS16A(this Stream stream, short[] data, SizePrefix prefix)
+        public static void WriteS16A(this Stream stream, short[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            prefix.WriteSync(stream, data.Length);
+            prefix.WriteSync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(short)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -361,9 +361,9 @@ namespace Net.Myzuc.UtilLib
             }
             await stream.WriteAsync(buffer);
         }
-        public static async Task<uint[]> ReadU32AAsync(this Stream stream, SizePrefix prefix)
+        public static async Task<uint[]> ReadU32AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = await prefix.ReadAsync(stream);
+            int size = await prefix.ReadAsync(stream, limit);
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(uint));
             uint[] data = new uint[size];
             for (int i = 0; i < size; i++)
@@ -372,9 +372,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteU32AAsync(this Stream stream, uint[] data, SizePrefix prefix)
+        public static async Task WriteU32AAsync(this Stream stream, uint[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            await prefix.WriteAsync(stream, data.Length);
+            await prefix.WriteAsync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(uint)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -412,9 +412,9 @@ namespace Net.Myzuc.UtilLib
             }
             stream.Write(buffer);
         }
-        public static uint[] ReadU32A(this Stream stream, SizePrefix prefix)
+        public static uint[] ReadU32A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = prefix.ReadSync(stream);
+            int size = prefix.ReadSync(stream, limit);
             byte[] buffer = stream.ReadU8A(size * sizeof(uint));
             uint[] data = new uint[size];
             for (int i = 0; i < size; i++)
@@ -423,9 +423,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteU32A(this Stream stream, uint[] data, SizePrefix prefix)
+        public static void WriteU32A(this Stream stream, uint[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            prefix.WriteSync(stream, data.Length);
+            prefix.WriteSync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(uint)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -465,9 +465,9 @@ namespace Net.Myzuc.UtilLib
             }
             await stream.WriteAsync(buffer);
         }
-        public static async Task<int[]> ReadS32AAsync(this Stream stream, SizePrefix prefix)
+        public static async Task<int[]> ReadS32AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = await prefix.ReadAsync(stream);
+            int size = await prefix.ReadAsync(stream, limit);
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(int));
             int[] data = new int[size];
             for (int i = 0; i < size; i++)
@@ -476,9 +476,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteS32AAsync(this Stream stream, int[] data, SizePrefix prefix)
+        public static async Task WriteS32AAsync(this Stream stream, int[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            await prefix.WriteAsync(stream, data.Length);
+            await prefix.WriteAsync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(int)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -516,9 +516,9 @@ namespace Net.Myzuc.UtilLib
             }
             stream.Write(buffer);
         }
-        public static int[] ReadS32A(this Stream stream, SizePrefix prefix)
+        public static int[] ReadS32A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = prefix.ReadSync(stream);
+            int size = prefix.ReadSync(stream, limit);
             byte[] buffer = stream.ReadU8A(size * sizeof(int));
             int[] data = new int[size];
             for (int i = 0; i < size; i++)
@@ -527,9 +527,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteS32A(this Stream stream, int[] data, SizePrefix prefix)
+        public static void WriteS32A(this Stream stream, int[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            prefix.WriteSync(stream, data.Length);
+            prefix.WriteSync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(int)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -569,9 +569,9 @@ namespace Net.Myzuc.UtilLib
             }
             await stream.WriteAsync(buffer);
         }
-        public static async Task<ulong[]> ReadU64AAsync(this Stream stream, SizePrefix prefix)
+        public static async Task<ulong[]> ReadU64AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = await prefix.ReadAsync(stream);
+            int size = await prefix.ReadAsync(stream, limit);
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(ulong));
             ulong[] data = new ulong[size];
             for (int i = 0; i < size; i++)
@@ -580,9 +580,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteU64AAsync(this Stream stream, ulong[] data, SizePrefix prefix)
+        public static async Task WriteU64AAsync(this Stream stream, ulong[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            await prefix.WriteAsync(stream, data.Length);
+            await prefix.WriteAsync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(ulong)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -620,9 +620,9 @@ namespace Net.Myzuc.UtilLib
             }
             stream.Write(buffer);
         }
-        public static ulong[] ReadU64A(this Stream stream, SizePrefix prefix)
+        public static ulong[] ReadU64A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = prefix.ReadSync(stream);
+            int size = prefix.ReadSync(stream, limit);
             byte[] buffer = stream.ReadU8A(size * sizeof(ulong));
             ulong[] data = new ulong[size];
             for (int i = 0; i < size; i++)
@@ -631,9 +631,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteU64A(this Stream stream, ulong[] data, SizePrefix prefix)
+        public static void WriteU64A(this Stream stream, ulong[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            prefix.WriteSync(stream, data.Length);
+            prefix.WriteSync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(ulong)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -673,9 +673,9 @@ namespace Net.Myzuc.UtilLib
             }
             await stream.WriteAsync(buffer);
         }
-        public static async Task<long[]> ReadS64AAsync(this Stream stream, SizePrefix prefix)
+        public static async Task<long[]> ReadS64AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = await prefix.ReadAsync(stream);
+            int size = await prefix.ReadAsync(stream, limit);
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(long));
             long[] data = new long[size];
             for (int i = 0; i < size; i++)
@@ -684,9 +684,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteS64AAsync(this Stream stream, long[] data, SizePrefix prefix)
+        public static async Task WriteS64AAsync(this Stream stream, long[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            await prefix.WriteAsync(stream, data.Length);
+            await prefix.WriteAsync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(long)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -724,9 +724,9 @@ namespace Net.Myzuc.UtilLib
             }
             stream.Write(buffer);
         }
-        public static long[] ReadS64A(this Stream stream, SizePrefix prefix)
+        public static long[] ReadS64A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = prefix.ReadSync(stream);
+            int size = prefix.ReadSync(stream, limit);
             byte[] buffer = stream.ReadU8A(size * sizeof(long));
             long[] data = new long[size];
             for (int i = 0; i < size; i++)
@@ -735,9 +735,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteS64A(this Stream stream, long[] data, SizePrefix prefix)
+        public static void WriteS64A(this Stream stream, long[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            prefix.WriteSync(stream, data.Length);
+            prefix.WriteSync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(long)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -777,9 +777,9 @@ namespace Net.Myzuc.UtilLib
             }
             await stream.WriteAsync(buffer);
         }
-        public static async Task<float[]> ReadF32AAsync(this Stream stream, SizePrefix prefix)
+        public static async Task<float[]> ReadF32AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = await prefix.ReadAsync(stream);
+            int size = await prefix.ReadAsync(stream, limit);
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(float));
             float[] data = new float[size];
             for (int i = 0; i < size; i++)
@@ -788,9 +788,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteF32AAsync(this Stream stream, float[] data, SizePrefix prefix)
+        public static async Task WriteF32AAsync(this Stream stream, float[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            await prefix.WriteAsync(stream, data.Length);
+            await prefix.WriteAsync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(float)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -828,9 +828,9 @@ namespace Net.Myzuc.UtilLib
             }
             stream.Write(buffer);
         }
-        public static float[] ReadF32A(this Stream stream, SizePrefix prefix)
+        public static float[] ReadF32A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = prefix.ReadSync(stream);
+            int size = prefix.ReadSync(stream, limit);
             byte[] buffer = stream.ReadU8A(size * sizeof(float));
             float[] data = new float[size];
             for (int i = 0; i < size; i++)
@@ -839,9 +839,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteF32A(this Stream stream, float[] data, SizePrefix prefix)
+        public static void WriteF32A(this Stream stream, float[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            prefix.WriteSync(stream, data.Length);
+            prefix.WriteSync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(float)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -881,9 +881,9 @@ namespace Net.Myzuc.UtilLib
             }
             await stream.WriteAsync(buffer);
         }
-        public static async Task<double[]> ReadF64AAsync(this Stream stream, SizePrefix prefix)
+        public static async Task<double[]> ReadF64AAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = await prefix.ReadAsync(stream);
+            int size = await prefix.ReadAsync(stream, limit);
             byte[] buffer = await stream.ReadU8AAsync(size * sizeof(double));
             double[] data = new double[size];
             for (int i = 0; i < size; i++)
@@ -892,9 +892,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static async Task WriteF64AAsync(this Stream stream, double[] data, SizePrefix prefix)
+        public static async Task WriteF64AAsync(this Stream stream, double[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            await prefix.WriteAsync(stream, data.Length);
+            await prefix.WriteAsync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(double)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -932,9 +932,9 @@ namespace Net.Myzuc.UtilLib
             }
             stream.Write(buffer);
         }
-        public static double[] ReadF64A(this Stream stream, SizePrefix prefix)
+        public static double[] ReadF64A(this Stream stream, SizePrefix prefix, int limit = int.MaxValue)
         {
-            int size = prefix.ReadSync(stream);
+            int size = prefix.ReadSync(stream, limit);
             byte[] buffer = stream.ReadU8A(size * sizeof(double));
             double[] data = new double[size];
             for (int i = 0; i < size; i++)
@@ -943,9 +943,9 @@ namespace Net.Myzuc.UtilLib
             }
             return data;
         }
-        public static void WriteF64A(this Stream stream, double[] data, SizePrefix prefix)
+        public static void WriteF64A(this Stream stream, double[] data, SizePrefix prefix, int limit = int.MaxValue)
         {
-            prefix.WriteSync(stream, data.Length);
+            prefix.WriteSync(stream, limit, data.Length);
             byte[] buffer = new byte[data.Length * sizeof(double)];
             for (int i = 0; i < data.Length; i++)
             {
@@ -1413,24 +1413,24 @@ namespace Net.Myzuc.UtilLib
         #endregion
 
         #region String
-        public static async Task<string> ReadStringAsync(this Stream stream, SizePrefix prefix, Encoding? encoding = null)
+        public static async Task<string> ReadStringAsync(this Stream stream, SizePrefix prefix, int limit = int.MaxValue, Encoding? encoding = null)
         {
-            return (encoding ?? Encoding.UTF8).GetString(await stream.ReadU8AAsync(await prefix.ReadAsync(stream)));
+            return (encoding ?? Encoding.UTF8).GetString(await stream.ReadU8AAsync(await prefix.ReadAsync(stream, limit)));
         }
-        public static async Task WriteStringAsync(this Stream stream, string data, SizePrefix prefix, Encoding? encoding = null)
+        public static async Task WriteStringAsync(this Stream stream, string data, SizePrefix prefix, int limit = int.MaxValue, Encoding? encoding = null)
         {
             byte[] buffer = (encoding ?? Encoding.UTF8).GetBytes(data);
-            await prefix.WriteAsync(stream, buffer.Length);
+            await prefix.WriteAsync(stream, limit, buffer.Length);
             await stream.WriteU8AAsync(buffer);
         }
-        public static string ReadString(this Stream stream, SizePrefix prefix, Encoding? encoding = null)
+        public static string ReadString(this Stream stream, SizePrefix prefix, int limit = int.MaxValue, Encoding? encoding = null)
         {
-            return (encoding ?? Encoding.UTF8).GetString(stream.ReadU8A(prefix.ReadSync(stream)));
+            return (encoding ?? Encoding.UTF8).GetString(stream.ReadU8A(prefix.ReadSync(stream, limit)));
         }
-        public static void WriteString(this Stream stream, string data, SizePrefix prefix, Encoding? encoding = null)
+        public static void WriteString(this Stream stream, string data, SizePrefix prefix, int limit = int.MaxValue, Encoding? encoding = null)
         {
             byte[] buffer = (encoding ?? Encoding.UTF8).GetBytes(data);
-            prefix.WriteSync(stream, buffer.Length);
+            prefix.WriteSync(stream, limit, buffer.Length);
             stream.WriteU8A(buffer);
         }
         #endregion
