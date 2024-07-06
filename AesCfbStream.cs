@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
@@ -12,15 +13,15 @@ namespace Net.Myzuc.ShioLib
             rsa.KeySize = 2048;
             if (host)
             {
-                await stream.WriteU8AAsync(rsa.ExportRSAPublicKey(), SizePrefix.S32V, rsa.KeySize / 8 + 128);
+                await stream.WriteU8AAsync(rsa.ExportRSAPublicKey(), SizePrefix.S32V, rsa.KeySize / 8 + 32);
                 byte[] secret = RandomNumberGenerator.GetBytes(aesKeySize);
-                await stream.WriteU8AAsync(rsa.Encrypt(secret, RSAEncryptionPadding.Pkcs1), SizePrefix.S32V, aesKeySize);
+                await stream.WriteU8AAsync(rsa.Encrypt(secret, RSAEncryptionPadding.Pkcs1), SizePrefix.S32V, aesKeySize + 11);
                 return secret;
             }
             else
             {
-                rsa.ImportRSAPublicKey(await stream.ReadU8AAsync(SizePrefix.S32V, rsa.KeySize / 8 + 128), out _);
-                return rsa.Decrypt(await stream.ReadU8AAsync(SizePrefix.S32V, aesKeySize), RSAEncryptionPadding.Pkcs1);
+                rsa.ImportRSAPublicKey(await stream.ReadU8AAsync(SizePrefix.S32V, rsa.KeySize / 8 + 32), out _);
+                return rsa.Decrypt(await stream.ReadU8AAsync(SizePrefix.S32V, aesKeySize + 11), RSAEncryptionPadding.Pkcs1);
             }
         }
         public static byte[] ExchangeKey(Stream stream, bool host, int aesKeySize = 32)
@@ -29,15 +30,15 @@ namespace Net.Myzuc.ShioLib
             rsa.KeySize = 2048;
             if (host)
             {
-                stream.WriteU8A(rsa.ExportRSAPublicKey(), SizePrefix.S32V, rsa.KeySize / 8 + 128);
+                stream.WriteU8A(rsa.ExportRSAPublicKey(), SizePrefix.S32V, rsa.KeySize / 8 + 32);
                 byte[] secret = RandomNumberGenerator.GetBytes(aesKeySize);
-                stream.WriteU8A(rsa.Encrypt(secret, RSAEncryptionPadding.Pkcs1), SizePrefix.S32V, aesKeySize);
+                stream.WriteU8A(rsa.Encrypt(secret, RSAEncryptionPadding.Pkcs1), SizePrefix.S32V, aesKeySize + 11);
                 return secret;
             }
             else
             {
-                rsa.ImportRSAPublicKey(stream.ReadU8A(SizePrefix.S32V, rsa.KeySize / 8 + 128), out _);
-                return rsa.Decrypt(stream.ReadU8A(SizePrefix.S32V, aesKeySize), RSAEncryptionPadding.Pkcs1);
+                rsa.ImportRSAPublicKey(stream.ReadU8A(SizePrefix.S32V, rsa.KeySize / 8 + 32), out _);
+                return rsa.Decrypt(stream.ReadU8A(SizePrefix.S32V, aesKeySize + 11), RSAEncryptionPadding.Pkcs1);
             }
         }
         public AesCfbStream(Stream stream, byte[] secret, byte[] vector) : base(Null, Null)

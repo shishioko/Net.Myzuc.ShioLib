@@ -17,14 +17,12 @@ namespace Net.Myzuc.ShioLib
             int length = stream.ReadS32V();
             if (length > limit) throw new ProtocolViolationException();
             return length;
-        }, async (Stream stream, int length, int limit) =>
+        }, async (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             await stream.WriteS32VAsync((short)length);
-        }, (Stream stream, int length, int limit) =>
+        }, (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             stream.WriteS32V((short)length);
         });
@@ -38,14 +36,14 @@ namespace Net.Myzuc.ShioLib
             int length = stream.ReadS16V();
             if (length > limit) throw new ProtocolViolationException();
             return length;
-        }, async (Stream stream, int length, int limit) =>
+        }, async (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > short.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             await stream.WriteS16VAsync((short)length);
-        }, (Stream stream, int length, int limit) =>
+        }, (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > short.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             stream.WriteS16V((short)length);
         });
@@ -59,14 +57,14 @@ namespace Net.Myzuc.ShioLib
             int length = stream.ReadS8V();
             if (length > limit) throw new ProtocolViolationException();
             return length;
-        }, async (Stream stream, int length, int limit) =>
+        }, async (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > sbyte.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             await stream.WriteS8VAsync((sbyte)length);
-        }, (Stream stream, int length, int limit) =>
+        }, (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > sbyte.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             stream.WriteS8V((sbyte)length);
         });
@@ -80,12 +78,12 @@ namespace Net.Myzuc.ShioLib
             int length = stream.ReadU16V();
             if (length > limit) throw new ProtocolViolationException();
             return length;
-        }, async (Stream stream, int length, int limit) =>
+        }, async (Stream stream, int limit, int length) =>
         {
             if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             await stream.WriteU16VAsync((ushort)length);
-        }, (Stream stream, int length, int limit) =>
+        }, (Stream stream, int limit, int length) =>
         {
             if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
@@ -101,14 +99,14 @@ namespace Net.Myzuc.ShioLib
             int length = stream.ReadU8V();
             if (length > limit) throw new ProtocolViolationException();
             return length;
-        }, async (Stream stream, int length, int limit) =>
+        }, async (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > byte.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             await stream.WriteU8VAsync((byte)length);
-        }, (Stream stream, int length, int limit) =>
+        }, (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > byte.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             stream.WriteU8V((byte)length);
         });
@@ -122,12 +120,12 @@ namespace Net.Myzuc.ShioLib
             int length = stream.ReadS32();
             if (length > limit) throw new ProtocolViolationException();
             return length;
-        }, async (Stream stream, int length, int limit) =>
+        }, async (Stream stream, int limit, int length) =>
         {
             if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             await stream.WriteS32Async((short)length);
-        }, (Stream stream, int length, int limit) =>
+        }, (Stream stream, int limit, int length) =>
         {
             if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
@@ -143,14 +141,14 @@ namespace Net.Myzuc.ShioLib
             int length = stream.ReadS16();
             if (length > limit) throw new ProtocolViolationException();
             return length;
-        }, async (Stream stream, int length, int limit) =>
+        }, async (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > short.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             await stream.WriteS16Async((short)length);
-        }, (Stream stream, int length, int limit) =>
+        }, (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > short.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             stream.WriteS16((short)length);
         });
@@ -164,17 +162,18 @@ namespace Net.Myzuc.ShioLib
             int length = stream.ReadS8();
             if (length > limit) throw new ProtocolViolationException();
             return length;
-        }, async (Stream stream, int length, int limit) =>
+        }, async (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > sbyte.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             await stream.WriteS8Async((sbyte)length);
-        }, (Stream stream, int length, int limit) =>
+        }, (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > sbyte.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             stream.WriteS8((sbyte)length);
-        });        public static readonly SizePrefix U16 = new(async (Stream stream, int limit) =>
+        });        
+        public static readonly SizePrefix U16 = new(async (Stream stream, int limit) =>
         {
             int length = await stream.ReadU16Async();
             if (length > limit) throw new ProtocolViolationException();
@@ -184,12 +183,12 @@ namespace Net.Myzuc.ShioLib
             int length = stream.ReadU16();
             if (length > limit) throw new ProtocolViolationException();
             return length;
-        }, async (Stream stream, int length, int limit) =>
+        }, async (Stream stream, int limit, int length) =>
         {
             if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             await stream.WriteU16Async((ushort)length);
-        }, (Stream stream, int length, int limit) =>
+        }, (Stream stream, int limit, int length) =>
         {
             if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
@@ -205,14 +204,14 @@ namespace Net.Myzuc.ShioLib
             int length = stream.ReadU8();
             if (length > limit) throw new ProtocolViolationException();
             return length;
-        }, async (Stream stream, int length, int limit) =>
+        }, async (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > byte.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             await stream.WriteU8Async((byte)length);
-        }, (Stream stream, int length, int limit) =>
+        }, (Stream stream, int limit, int length) =>
         {
-            if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
+            if (length > byte.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
             stream.WriteU8((byte)length);
         });
