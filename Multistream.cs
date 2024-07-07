@@ -94,7 +94,7 @@ namespace Net.Myzuc.ShioLib
                 while (!Disposed)
                 {
                     Guid streamId = await Stream.ReadGuidAsync();
-                    byte[] data = await Stream.ReadU8AAsync(SizePrefix.U16, 1024);
+                    byte[] data = await Stream.ReadU8AAsync(SizePrefix.U32V, 1024);
                     await Sync.WaitAsync();
                     if (!Streams.TryGetValue(streamId, out ChannelStream? stream))
                     {
@@ -111,7 +111,6 @@ namespace Net.Myzuc.ShioLib
                         Streams.Remove(streamId);
                     }
                     Sync.Release();
-                    //await Stream.ReadU8AAsync(((16 - ((18 + data.Length) % 16)) & 15) + 16);
                 }
             }
             catch (Exception ex)
@@ -138,8 +137,7 @@ namespace Net.Myzuc.ShioLib
                         await SyncWrite.WaitAsync();
                         await Stream.WriteGuidAsync(streamId);
                         int size = int.Min(data.Length - i, 1024);
-                        await Stream.WriteU8AAsync(data[i..(i + size)], SizePrefix.U16, 1024);
-                        //await Stream.WriteU8AAsync(new byte[((16 - ((18 + size) % 16)) & 15) + 16]);
+                        await Stream.WriteU8AAsync(data[i..(i + size)], SizePrefix.U32V, 1024);
                         SyncWrite.Release();
                     }
                     if (complete) break;
