@@ -46,9 +46,10 @@ namespace Net.Myzuc.ShioLib
         private readonly Aes Aes;
         private readonly bool KeepOpen;
         private readonly byte[] ReadVector = new byte[16];
+        private readonly byte[] ReadCipher = new byte[16];
         private readonly byte[] WriteVector = new byte[16];
-        private int ReadVectorPosition = 0;
-        private int WriteVectorPosition = 0;
+        private readonly byte[] WriteCipher = new byte[16];
+        private readonly byte[] WriteBuffer = new byte[16];
         public override bool CanRead => Stream.CanRead;
         public override bool CanWrite => Stream.CanWrite;
         public override bool CanSeek => false;
@@ -72,14 +73,12 @@ namespace Net.Myzuc.ShioLib
         {
             int read = Stream.Read(buffer, offset, count);
             if (read <= 0) return read;
-            for (int i = 0, size; i < read; i += size)
+            for (int i = 0; i < read; i++)
             {
-                size = int.Min(16 - (ReadVectorPosition &= 15), read - i);
-                if (ReadVectorPosition == 0) Buffer.BlockCopy(Aes.EncryptEcb(ReadVector, PaddingMode.None), 0, ReadVector, 0, 16);
-                for (int e = 0; e < size; e++)
-                {
-                    ReadVector[ReadVectorPosition] ^= buffer[offset + i + e] ^= ReadVector[ReadVectorPosition++];
-                }
+                Buffer.BlockCopy(Aes.EncryptEcb(ReadVector, PaddingMode.None), 0, ReadCipher, 0, 16);
+                Buffer.BlockCopy(ReadVector, 1, ReadVector, 0, 15);
+                ReadVector[15] = buffer[offset + i];
+                buffer[offset + i] ^= ReadCipher[0];
             }
             return read;
         }
@@ -87,29 +86,28 @@ namespace Net.Myzuc.ShioLib
         {
             int read = Stream.Read(buffer);
             if (read <= 0) return read;
-            for (int i = 0, size; i < read; i += size)
+            for (int i = 0; i < read; i++)
             {
-                size = int.Min(16 - (ReadVectorPosition &= 15), read - i);
-                if (ReadVectorPosition == 0) Buffer.BlockCopy(Aes.EncryptEcb(ReadVector, PaddingMode.None), 0, ReadVector, 0, 16);
-                for (int e = 0; e < size; e++)
-                {
-                    ReadVector[ReadVectorPosition] ^= buffer[i + e] ^= ReadVector[ReadVectorPosition++];
-                }
+                Buffer.BlockCopy(Aes.EncryptEcb(ReadVector, PaddingMode.None), 0, ReadCipher, 0, 16);
+                Buffer.BlockCopy(ReadVector, 1, ReadVector, 0, 15);
+                ReadVector[15] = buffer[i];
+                buffer[i] ^= ReadCipher[0];
             }
             return read;
         }
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (count <= 0) return;
-            for (int i = 0, size; i < count; i += size)
+            for (int i = 0, size; i < buffer.Length; i += size)
             {
-                size = int.Min(16 - (WriteVectorPosition &= 15), count - i);
-                if (WriteVectorPosition == 0) Buffer.BlockCopy(Aes.EncryptEcb(WriteVector, PaddingMode.None), 0, WriteVector, 0, 16);
+                size = int.Min(16, buffer.Length - i);
                 for (int e = 0; e < size; e++)
                 {
-                    WriteVector[WriteVectorPosition++] ^= buffer[offset + i + e];
+                    Buffer.BlockCopy(Aes.EncryptEcb(WriteVector, PaddingMode.None), 0, WriteCipher, 0, 16);
+                    Buffer.BlockCopy(WriteVector, 1, WriteVector, 0, 15);
+                    WriteVector[15] = WriteBuffer[e] = (byte)(WriteCipher[0] ^ buffer[offset + i + e]);
                 }
-                Stream.Write(WriteVector, WriteVectorPosition - size, size);
+                Stream.Write(WriteBuffer, 0, size);
             }
         }
         public override void Write(ReadOnlySpan<byte> buffer)
@@ -117,27 +115,26 @@ namespace Net.Myzuc.ShioLib
             if (buffer.Length <= 0) return;
             for (int i = 0, size; i < buffer.Length; i += size)
             {
-                size = int.Min(16 - (WriteVectorPosition &= 15), buffer.Length - i);
-                if (WriteVectorPosition == 0) Buffer.BlockCopy(Aes.EncryptEcb(WriteVector, PaddingMode.None), 0, WriteVector, 0, 16);
+                size = int.Min(16, buffer.Length - i);
                 for (int e = 0; e < size; e++)
                 {
-                    WriteVector[WriteVectorPosition++] ^= buffer[i + e];
+                    Buffer.BlockCopy(Aes.EncryptEcb(WriteVector, PaddingMode.None), 0, WriteCipher, 0, 16);
+                    Buffer.BlockCopy(WriteVector, 1, WriteVector, 0, 15);
+                    WriteVector[15] = WriteBuffer[e] = (byte)(WriteCipher[0] ^ buffer[i + e]);
                 }
-                Stream.Write(WriteVector, WriteVectorPosition - size, size);
+                Stream.Write(WriteBuffer, 0, size);
             }
         }
         public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken = default)
         {
             int read = await Stream.ReadAsync(buffer.AsMemory(offset, count), cancellationToken);
             if (read <= 0) return read;
-            for (int i = 0, size; i < read; i += size)
+            for (int i = 0; i < read; i++)
             {
-                size = int.Min(16 - (ReadVectorPosition &= 15), read - i);
-                if (ReadVectorPosition == 0) Buffer.BlockCopy(Aes.EncryptEcb(ReadVector, PaddingMode.None), 0, ReadVector, 0, 16);
-                for (int e = 0; e < size; e++)
-                {
-                    ReadVector[ReadVectorPosition] ^= buffer[offset + i + e] ^= ReadVector[ReadVectorPosition++];
-                }
+                Buffer.BlockCopy(Aes.EncryptEcb(ReadVector, PaddingMode.None), 0, ReadCipher, 0, 16);
+                Buffer.BlockCopy(ReadVector, 1, ReadVector, 0, 15);
+                ReadVector[15] = buffer[offset + i];
+                buffer[offset + i] ^= ReadCipher[0];
             }
             return read;
         }
@@ -145,29 +142,28 @@ namespace Net.Myzuc.ShioLib
         {
             int read = await Stream.ReadAsync(buffer, cancellationToken);
             if (read <= 0) return read;
-            for (int i = 0, size; i < read; i += size)
+            for (int i = 0; i < read; i++)
             {
-                size = int.Min(16 - (ReadVectorPosition &= 15), read - i);
-                if (ReadVectorPosition == 0) Buffer.BlockCopy(Aes.EncryptEcb(ReadVector, PaddingMode.None), 0, ReadVector, 0, 16);
-                for (int e = 0; e < size; e++)
-                {
-                    ReadVector[ReadVectorPosition] ^= buffer.Span[i + e] ^= ReadVector[ReadVectorPosition++];
-                }
+                Buffer.BlockCopy(Aes.EncryptEcb(ReadVector, PaddingMode.None), 0, ReadCipher, 0, 16);
+                Buffer.BlockCopy(ReadVector, 1, ReadVector, 0, 15);
+                ReadVector[15] = buffer.Span[i];
+                buffer.Span[i] ^= ReadCipher[0];
             }
             return read;
         }
         public override async Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken = default)
         {
             if (count <= 0) return;
-            for (int i = 0, size; i < count; i += size)
+            for (int i = 0, size; i < buffer.Length; i += size)
             {
-                size = int.Min(16 - (WriteVectorPosition &= 15), count - i);
-                if (WriteVectorPosition == 0) Buffer.BlockCopy(Aes.EncryptEcb(WriteVector, PaddingMode.None), 0, WriteVector, 0, 16);
+                size = int.Min(16, buffer.Length - i);
                 for (int e = 0; e < size; e++)
                 {
-                    WriteVector[WriteVectorPosition++] ^= buffer[offset + i + e];
+                    Buffer.BlockCopy(Aes.EncryptEcb(WriteVector, PaddingMode.None), 0, WriteCipher, 0, 16);
+                    Buffer.BlockCopy(WriteVector, 1, WriteVector, 0, 15);
+                    WriteVector[15] = WriteBuffer[e] = (byte)(WriteCipher[0] ^ buffer[offset + i + e]);
                 }
-                await Stream.WriteAsync(WriteVector.AsMemory(WriteVectorPosition - size, size), cancellationToken);
+                await Stream.WriteAsync(WriteBuffer.AsMemory(0, size), cancellationToken);
             }
         }
         public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
@@ -175,13 +171,14 @@ namespace Net.Myzuc.ShioLib
             if (buffer.Length <= 0) return;
             for (int i = 0, size; i < buffer.Length; i += size)
             {
-                size = int.Min(16 - (WriteVectorPosition &= 15), buffer.Length - i);
-                if (WriteVectorPosition == 0) Buffer.BlockCopy(Aes.EncryptEcb(WriteVector, PaddingMode.None), 0, WriteVector, 0, 16);
+                size = int.Min(16, buffer.Length - i);
                 for (int e = 0; e < size; e++)
                 {
-                    WriteVector[WriteVectorPosition++] ^= buffer.Span[i + e];
+                    Buffer.BlockCopy(Aes.EncryptEcb(WriteVector, PaddingMode.None), 0, WriteCipher, 0, 16);
+                    Buffer.BlockCopy(WriteVector, 1, WriteVector, 0, 15);
+                    WriteVector[15] = WriteBuffer[e] = (byte)(WriteCipher[0] ^ buffer.Span[i + e]);
                 }
-                await Stream.WriteAsync(WriteVector.AsMemory(WriteVectorPosition - size, size), cancellationToken);
+                await Stream.WriteAsync(WriteBuffer.AsMemory(0, size), cancellationToken);
             }
         }
         public override long Seek(long offset, SeekOrigin origin)
