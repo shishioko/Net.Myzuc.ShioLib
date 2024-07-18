@@ -8,40 +8,6 @@ namespace Net.Myzuc.ShioLib
 {
     public sealed class ShioAesCfbStream : Stream
     {
-        public static async Task<byte[]> ExchangeKeyAsync(Stream stream, bool host, int aesKeySize = 32)
-        {
-            using RSA rsa = RSA.Create();
-            rsa.KeySize = 2048;
-            if (host)
-            {
-                rsa.ImportRSAPublicKey(await stream.ReadU8AAsync(SizePrefix.S32V, rsa.KeySize / 8 + 32), out _);
-                byte[] secret = RandomNumberGenerator.GetBytes(aesKeySize);
-                await stream.WriteU8AAsync(rsa.Encrypt(secret, RSAEncryptionPadding.Pkcs1), SizePrefix.S32V, rsa.KeySize / 8);
-                return secret;
-            }
-            else
-            {
-                await stream.WriteU8AAsync(rsa.ExportRSAPublicKey(), SizePrefix.S32V, rsa.KeySize / 8 + 32);
-                return rsa.Decrypt(await stream.ReadU8AAsync(SizePrefix.S32V, rsa.KeySize / 8), RSAEncryptionPadding.Pkcs1);
-            }
-        }
-        public static byte[] ExchangeKey(Stream stream, bool host, int aesKeySize = 32)
-        {
-            using RSA rsa = RSA.Create();
-            rsa.KeySize = 2048;
-            if (host)
-            {
-                rsa.ImportRSAPublicKey(stream.ReadU8A(SizePrefix.S32V, rsa.KeySize / 8 + 32), out _);
-                byte[] secret = RandomNumberGenerator.GetBytes(aesKeySize);
-                stream.WriteU8A(rsa.Encrypt(secret, RSAEncryptionPadding.Pkcs1), SizePrefix.S32V, rsa.KeySize / 8);
-                return secret;
-            }
-            else
-            {
-                stream.WriteU8A(rsa.ExportRSAPublicKey(), SizePrefix.S32V, rsa.KeySize / 8 + 32);
-                return rsa.Decrypt(stream.ReadU8A(SizePrefix.S32V, rsa.KeySize / 8), RSAEncryptionPadding.Pkcs1);
-            }
-        }
         public readonly Stream Stream;
         private readonly Aes Aes;
         private readonly bool KeepOpen;
