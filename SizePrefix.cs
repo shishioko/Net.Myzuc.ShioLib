@@ -20,11 +20,11 @@ namespace Net.Myzuc.ShioLib
         }, async (Stream stream, int limit, int length) =>
         {
             if (length > limit) throw new ProtocolViolationException();
-            await stream.WriteS32VAsync((short)length);
+            await stream.WriteS32VAsync(length);
         }, (Stream stream, int limit, int length) =>
         {
             if (length > limit) throw new ProtocolViolationException();
-            stream.WriteS32V((short)length);
+            stream.WriteS32V(length);
         });
         public static readonly SizePrefix S16V = new(async (Stream stream, int limit) =>
         {
@@ -124,12 +124,12 @@ namespace Net.Myzuc.ShioLib
         {
             if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
-            await stream.WriteS32Async((short)length);
+            await stream.WriteS32Async(length);
         }, (Stream stream, int limit, int length) =>
         {
             if (length > ushort.MaxValue) throw new ArgumentOutOfRangeException();
             if (length > limit) throw new ProtocolViolationException();
-            stream.WriteS32((short)length);
+            stream.WriteS32(length);
         });
         public static readonly SizePrefix S16 = new(async (Stream stream, int limit) =>
         {
