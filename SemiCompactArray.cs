@@ -59,7 +59,7 @@ namespace Net.Myzuc.ShioLib
             Contract.Requires(bits <= 32);
             Bits = bits;
             Length = length;
-            Data = new ulong[(length - 1) / (64 / bits) + 1];
+            Data = new ulong[length == 0 ? 0 : (length - 1) / (64 / bits) + 1];
         }
         /// <summary>
         /// Creates a new CompactArray from raw data.
@@ -108,10 +108,10 @@ namespace Net.Myzuc.ShioLib
             {
                 Contract.Requires(index >= 0);
                 Contract.Requires(index < Length);
-                Contract.Requires(value < 1 << Bits);
+                Contract.Requires(value < 1 << Bits); //TODO: fix overflow
                 int pack = 64 / Bits;
                 int position = index / pack;
-                int shift = (index % pack) * Bits;
+                int shift = index % pack * Bits;
                 ulong data = Data[position];
                 data &= ~(((1UL << Bits) - 1UL) << shift);
                 data |= (ulong)value << shift;

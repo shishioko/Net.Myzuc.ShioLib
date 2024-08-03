@@ -102,9 +102,9 @@ namespace Net.Myzuc.ShioLib
             {
                 Contract.Requires(index >= 0);
                 Contract.Requires(index < Length);
-                int position = (int)((ulong)index * 64 / Bits);
+                int position = (int)((ulong)index * Bits / 64);
                 ulong mask = (1UL << Bits) - 1UL;
-                int shift = (index % Bits) * Bits;
+                int shift = (int)((ulong)index * Bits % 64);
                 int data = (int)((Data[position] & (mask << shift)) >> shift);
                 if (shift + Bits <= 64) return data;
                 shift = -(shift + Bits - 64);
@@ -117,12 +117,12 @@ namespace Net.Myzuc.ShioLib
                 Contract.Requires(index < Length);
                 Contract.Requires(value < 1 << Bits);
                 ulong mask = (1UL << Bits) - 1UL;
-                int position = (int)((ulong)index * 64 / Bits);
-                int shift = (index % Bits) * Bits;
+                int position = (int)((ulong)index * Bits / 64);
+                int shift = (int)((ulong)index * Bits % 64);
                 Data[position] &= ~(mask << shift);
                 Data[position] |= (ulong)value << shift;
                 if (shift + Bits <= 64) return;
-                shift = -(shift + Bits - 64);
+                shift = -(shift - 64);
                 position++;
                 Data[position] &= ~(mask >> shift);
                 Data[position] |= (ulong)value >> shift;
