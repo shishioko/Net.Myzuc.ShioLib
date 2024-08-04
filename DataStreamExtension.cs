@@ -1071,18 +1071,7 @@ namespace Net.Myzuc.ShioLib
         }
         public static async Task<int> WriteS8VAsync(this Stream stream, sbyte data)
         {
-            int size = 0;
-            do
-            {
-                byte current = (byte)data;
-                data >>= 7;
-                if (data != 0) current |= 128;
-                else current &= 127;
-                await stream.WriteU8Async(current);
-                size++;
-            }
-            while (data != 0);
-            return size;
+            return await stream.WriteU8VAsync((byte)data);
         }
         public static sbyte ReadS8V(this Stream stream)
         {
@@ -1090,18 +1079,7 @@ namespace Net.Myzuc.ShioLib
         }
         public static int WriteS8V(this Stream stream, sbyte data)
         {
-            int size = 0;
-            do
-            {
-                byte current = (byte)data;
-                data >>= 7;
-                if (data != 0) current |= 128;
-                else current &= 127;
-                stream.WriteU8(current);
-                size++;
-            }
-            while (data != 0);
-            return size;
+            return stream.WriteU8V((byte)data);
         }
         #endregion
         #region U16V
@@ -1169,18 +1147,7 @@ namespace Net.Myzuc.ShioLib
         }
         public static async Task<int> WriteS16VAsync(this Stream stream, short data)
         {
-            int size = 0;
-            do
-            {
-                byte current = (byte)data;
-                data >>= 7;
-                if (data != 0) current |= 128;
-                else current &= 127;
-                await stream.WriteU8Async(current);
-                size++;
-            }
-            while (data != 0);
-            return size;
+            return await stream.WriteU16VAsync((ushort)data);
         }
         public static short ReadS16V(this Stream stream)
         {
@@ -1188,18 +1155,7 @@ namespace Net.Myzuc.ShioLib
         }
         public static int WriteS16V(this Stream stream, short data)
         {
-            int size = 0;
-            do
-            {
-                byte current = (byte)data;
-                data >>= 7;
-                if (data != 0) current |= 128;
-                else current &= 127;
-                stream.WriteU8(current);
-                size++;
-            }
-            while (data != 0);
-            return size;
+            return stream.WriteU16V((ushort)data);
         }
         #endregion
         #region U32V
@@ -1260,25 +1216,14 @@ namespace Net.Myzuc.ShioLib
             return size;
         }
         #endregion
-        #region S32
+        #region S32V
         public static async Task<int> ReadS32VAsync(this Stream stream)
         {
             return (int)await stream.ReadU32VAsync();
         }
         public static async Task<int> WriteS32VAsync(this Stream stream, int data)
         {
-            int size = 0;
-            do
-            {
-                byte current = (byte)data;
-                data >>= 7;
-                if (data != 0) current |= 128;
-                else current &= 127;
-                await stream.WriteU8Async(current);
-                size++;
-            }
-            while (data != 0);
-            return size;
+            return await stream.WriteU32VAsync((uint)data);
         }
         public static int ReadS32V(this Stream stream)
         {
@@ -1286,18 +1231,7 @@ namespace Net.Myzuc.ShioLib
         }
         public static int WriteS32V(this Stream stream, int data)
         {
-            int size = 0;
-            do
-            {
-                byte current = (byte)data;
-                data >>= 7;
-                if (data != 0) current |= 128;
-                else current &= 127;
-                stream.WriteU8(current);
-                size++;
-            }
-            while (data != 0);
-            return size;
+            return stream.WriteU32V((uint)data);
         }
         #endregion
         #region U64V
@@ -1358,25 +1292,14 @@ namespace Net.Myzuc.ShioLib
             return size;
         }
         #endregion
-        #region S64
+        #region S64V
         public static async Task<long> ReadS64VAsync(this Stream stream)
         {
             return (long)await stream.ReadU64VAsync();
         }
         public static async Task<int> WriteS64VAsync(this Stream stream, long data)
         {
-            int size = 0;
-            do
-            {
-                byte current = (byte)data;
-                data >>= 7;
-                if (data != 0) current |= 128;
-                else current &= 127;
-                await stream.WriteU8Async(current);
-                size++;
-            }
-            while (data != 0);
-            return size;
+            return await stream.WriteU64VAsync((ulong)data);
         }
         public static long ReadS64V(this Stream stream)
         {
@@ -1384,18 +1307,7 @@ namespace Net.Myzuc.ShioLib
         }
         public static int WriteS64V(this Stream stream, long data)
         {
-            int size = 0;
-            do
-            {
-                byte current = (byte)data;
-                data >>= 7;
-                if (data != 0) current |= 128;
-                else current &= 127;
-                stream.WriteU8(current);
-                size++;
-            }
-            while (data != 0);
-            return size;
+            return stream.WriteU64V((ulong)data);
         }
         #endregion
 
