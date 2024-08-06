@@ -7,8 +7,8 @@ namespace Net.Myzuc.ShioLib
 {
     public class WrapperStream<InputType, OutputType> : Stream where InputType : Stream where OutputType : Stream
     {
-        public InputType Input;
-        public OutputType Output;
+        private readonly InputType Input;
+        private readonly OutputType Output;
         public override bool CanRead => Input.CanRead;
         public override bool CanWrite => Output.CanWrite;
         public override bool CanSeek => false;
