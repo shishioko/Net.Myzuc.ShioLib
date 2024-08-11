@@ -13,15 +13,20 @@ namespace Net.Myzuc.ShioLib
             while (true)
             {
                 ushort request = await client.ReadU16Async();
-                await source.ReadAsync(buffer.AsMemory(0, request));
-                await client.WriteAsync(buffer.AsMemory(0, request));
+                while (request > 0)
+                {
+                    int read = await source.ReadAsync(buffer.AsMemory(0, request));
+                    if (read <= 0) return;
+                    await client.WriteAsync(buffer.AsMemory(0, read));
+                    request -= (ushort)read;
+                }
             }
         }
         private readonly Stream Stream;
         private byte[] Buffer;
-        private int BufferPosition;
+        private int BufferPosition = 0;
+        private int BufferSize = 0;
         private int BufferRequests = 0;
-        private readonly ushort BufferSize;
         private readonly int BufferCount;
         public override bool CanRead => true;
         public override bool CanSeek => false;
@@ -31,10 +36,8 @@ namespace Net.Myzuc.ShioLib
         public OnDemandStream(Stream stream, ushort bufferSize, int bufferCount)
         {
             Stream = stream;
-            BufferSize = bufferSize;
             BufferCount = bufferCount;
-            Buffer = new byte[BufferSize];
-            BufferPosition = BufferSize;
+            Buffer = new byte[BufferPosition = BufferSize = bufferSize];
         }
         public override int Read(byte[] buffer, int offset, int count)
         {
@@ -61,19 +64,22 @@ namespace Net.Myzuc.ShioLib
         }
         public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         {
+            if (BufferSize <= 0) return 0;
             while (BufferRequests < BufferCount)
             {
-                await Stream.WriteU16Async(BufferSize);
+                await Stream.WriteU16Async((ushort)Buffer.Length);
                 BufferRequests++;
             }
-            if (Buffer.Length <= BufferPosition)
+            if (BufferSize <= BufferPosition)
             {
-                await Stream.ReadAsync(Buffer, cancellationToken);
+                BufferSize = await Stream.ReadAsync(Buffer, cancellationToken);
+                if (BufferSize <= 0) return 0;
                 BufferPosition = 0;
                 BufferRequests--;
             }
-            int length = int.Min(buffer.Length, Buffer.Length - BufferPosition);
+            int length = int.Min(buffer.Length, BufferSize - BufferPosition);
             Buffer.AsMemory(BufferPosition, length).CopyTo(buffer);
+            BufferPosition += length;
             return length;
         }
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
