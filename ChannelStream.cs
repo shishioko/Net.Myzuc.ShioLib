@@ -105,11 +105,11 @@ namespace Net.Myzuc.ShioLib
         }
         public override void Close()
         {
-            Writer?.Complete();
+            Writer?.TryComplete();
         }
         protected override void Dispose(bool disposing)
         {
-            Writer?.Complete();
+            Writer.TryComplete();
         }
     }
 }
