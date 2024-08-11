@@ -48,20 +48,9 @@ namespace Net.Myzuc.ShioLib
         {
             WriteAsync(new ReadOnlyMemory<byte>(buffer.ToArray())).AsTask().Wait();
         }
-        public override async Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
+        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
-            Contract.Requires(CanRead);
-            if (LastRead.Length <= LastReadPosition)
-            {
-                if (Reader!.Completion.IsCompleted && Reader!.Count == 0) return 0;
-                do LastRead = await Reader!.ReadAsync(cancellationToken);
-                while (LastRead.Length <= 0);
-                LastReadPosition = 0;
-            }
-            int length = int.Min(count, LastRead.Length - LastReadPosition);
-            Array.Copy(LastRead, LastReadPosition, buffer, offset, length);
-            LastReadPosition += length;
-            return length;
+            return ReadAsync(buffer.AsMemory(offset, count), cancellationToken).AsTask();
         }
         public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         {
@@ -69,7 +58,17 @@ namespace Net.Myzuc.ShioLib
             if (LastRead.Length <= LastReadPosition)
             {
                 if (Reader!.Completion.IsCompleted && Reader!.Count == 0) return 0;
-                do LastRead = await Reader!.ReadAsync(cancellationToken);
+                do
+                {
+                    try
+                    {
+                        LastRead = await Reader!.ReadAsync(cancellationToken);
+                    }
+                    catch(Exception)
+                    {
+                        if (Reader!.Completion.IsCompleted && Reader!.Count == 0) return 0;
+                    }
+                }
                 while (LastRead.Length == 0);
                 LastReadPosition = 0;
             }
